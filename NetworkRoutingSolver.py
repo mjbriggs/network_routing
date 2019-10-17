@@ -3,10 +3,14 @@
 
 from CS312Graph import *
 import time
+from NetworkHeap import NetworkHeap
+from ArrayHeap import ArrayHeap
 
 
 class NetworkRoutingSolver:
-    def __init__( self):
+    def __init__( self ):
+        self.dist_arr = [] 
+        self.prev_arr = []
         pass
 
     def initializeNetwork( self, network ):
@@ -34,6 +38,28 @@ class NetworkRoutingSolver:
     def computeShortestPaths( self, srcIndex, use_heap=False ):
         self.source = srcIndex
         t1 = time.time()
+        array_heap = ArrayHeap()
+
+        for i in range(len(self.network.getNodes())):
+            self.dist_arr.append(-1)
+            self.prev_arr.append(-1)
+
+        self.dist_arr[self.source] = 0
+
+        array_heap.makeQueue(self.network.getNodes(), self.dist_arr, self.prev_arr)
+        
+        while array_heap.length() > 0:
+            node_index = array_heap.deleteMin()
+            node = self.network.nodes[self.source]
+            node = self.network.nodes[node_index]
+            for e in range(len(node.neighbors)):
+                print(node.neighbors[e])
+                # if array_heap.dist_array[node_index] > array_heap.dist_array[edge]
+
+        array_heap.decreaseKey(None)
+        array_heap.deleteMin()
+        # for i in range(self.source):
+
         # TODO: RUN DIJKSTRA'S TO DETERMINE SHORTEST PATHS.
         #       ALSO, STORE THE RESULTS FOR THE SUBSEQUENT
         #       CALL TO getShortestPath(dest_index)

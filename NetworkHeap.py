@@ -1,0 +1,26 @@
+import abc
+
+# Abstract class that defines necessary behavior for network heaps
+class NetworkHeap(abc.ABC):
+    
+    @abc.abstractmethod
+    def makeQueue(self, graph, dist_array, prev_arr):
+        pass
+
+    @abc.abstractmethod
+    def insert(self, node):
+        pass
+
+    @abc.abstractmethod
+    def deleteMin(self):
+        #will return minimum node
+        pass
+
+    @abc.abstractmethod
+    def decreaseKey(self, node):
+        pass
+
+    @abc.abstractmethod
+    def length(self):
+        pass
+

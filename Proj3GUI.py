@@ -270,6 +270,8 @@ class Proj3GUI( QMainWindow ):
 		if doArray:
 			array_time = self.solver.computeShortestPaths( int(self.sourceNode.text())-1, use_heap=False )
 			array_path = self.solver.getShortestPath( int(self.targetNode.text())-1 )
+			# array_time = 0
+			# array_path = self.solver.getEntireGraph()
 			dist = array_path['cost']
 		if doHeap:
 			heap_time = self.solver.computeShortestPaths( int(self.sourceNode.text())-1, use_heap=True )

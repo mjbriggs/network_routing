@@ -8,24 +8,40 @@ from ArrayHeap import ArrayHeap
 
 
 class NetworkRoutingSolver:
-    def __init__( self ):
+    def __init__( self ):                                                                                                               
         self.dist_arr = [] 
         self.prev_arr = []
         self.shortestPath = []
-        pass
+        self.savedPath = []
+        self.visited = []
 
     def initializeNetwork( self, network ):
         assert( type(network) == CS312Graph )
         self.network = network
 
-    def bfs(self, next_indexes, current_node):
-        for j in range(len(self.prev_array)):
-            if(self.prev_array[j] == current_node):
-                next_indexes.append(j)
+    def explore(self, srcIndex, destIndex):
+        # print("exploring at node ", srcIndex, " looking for node ", destIndex)
+        self.visited[srcIndex] = True
+        self.shortestPath.append(srcIndex)
+        # print("pushing ", srcIndex, " onto stack")
+        if srcIndex == destIndex:
+            # print("found destination node, path is ", self.shortestPath)
+            self.savedPath = [i for i in self.shortestPath]
+            return
+        else:
+            node = self.network.nodes[srcIndex]
+            visits = 0
+            # print("checking ", srcIndex, "'s children")
+            for n in node.neighbors:
+                if self.visited[n.dest.node_id] == False and self.prev_array[n.dest.node_id] == srcIndex:
+                    self.explore(n.dest.node_id, destIndex)
+                    visits += 1
+            
+            #if visits == 0:
+            # print("popping ", srcIndex, " off of stack")
+            self.shortestPath.pop()
 
     def getShortestPath( self, destIndex ):
-        print("network dist ", self.dist_array)
-        print("network prev ", self.prev_array)
         self.dest = destIndex
         # TODO: RETURN THE SHORTEST PATH FOR destIndex
         #       INSTEAD OF THE DUMMY SET OF EDGES BELOW
@@ -63,70 +79,60 @@ class NetworkRoutingSolver:
         max_edge = 3
         child = 0
         looping = True
-        # infinite loop
-        while looping:
-            found_nodes.append(current_node)
-            node = self.network.nodes[current_node]
-            for neighbor in node.neighbors:
-                n_id = neighbor.dest.node_id
-                paths = 0
-                if not n_id in found_nodes:
-                    edge = neighbor
-                    if self.prev_array[edge.dest.node_id] == current_node:
-                        paths += 1
-                        print(edge.dest.node_id, " has a parent node ", current_node)
-                        print("found next node ", edge.dest.node_id)
-                        print("found_nodes ", str(found_nodes))
-                        # path_edges.append( (edge.src.loc, edge.dest.loc, '{:.0f}'.format(edge.length)) )
-                        total_length += edge.length
-                        current_node = edge.dest.node_id
-                        path_nodes.append(current_node)
-                        # child = 0
-                        if current_node == destIndex:
-                            looping = False
-                        else:
-                            continue
-                elif neighbor == 2 and paths == 0:
-                    # if we get here and it means all of current_node's children are visited, so pop this off the stack
-                    path_nodes.pop()
+        self.explore(self.source, destIndex) 
 
-            if len(path_nodes) == 0:
-                looping = False
-            
-            child += 1
-            child = child % max_edge
-                
+        print("network dist ", self.dist_array)
+        print("network prev ", self.prev_array)
+        print("path_nodes ", self.savedPath)
 
-        print("path_nodes ", path_nodes)
         next_nodes = []
         next_nodes.append(current_node)
         next_node = 0
         more_children = True
         # just trying to print entire shortest path tree
-        while more_children:
-            temp_next_nodes = []
-            for n in range(len(next_nodes)):
-                current_node = next_nodes[n]
-                print("current_node ", current_node)
-                found_nodes.append(current_node)
-                node = self.network.nodes[current_node]
-                print("node = ", node)
-                for neighbor in range(3):
-                    edge = node.neighbors[neighbor]
-                    print("edge = ", edge)
-                    if self.prev_array[edge.dest.node_id] == current_node:
-                        print(edge.dest.node_id, " has a parent node ", current_node)
-                        if not edge.dest.node_id in found_nodes:
-                            print("found next node ", edge.dest.node_id)
-                            print("found_nodes ", str(found_nodes))
-                            path_edges.append( (edge.src.loc, edge.dest.loc, '{:.0f}'.format(edge.length)) )
-                            total_length += edge.length
-                            temp_next_nodes.append(edge.dest.node_id)
+        showTree = False
+        showPath = len(self.savedPath) > 0
+        if showTree:
+            while more_children:
+                temp_next_nodes = []
+                for n in range(len(next_nodes)):
+                    current_node = next_nodes[n]
+                    # print("current_node ", current_node)
+                    found_nodes.append(current_node)
+                    node = self.network.nodes[current_node]
+                    # print("node = ", node)
+                    for neighbor in range(3):
+                        edge = node.neighbors[neighbor]
+                        # print("edge = ", edge)
+                        if self.prev_array[edge.dest.node_id] == current_node:
+                            # print(edge.dest.node_id, " has a parent node ", current_node)
+                            if not edge.dest.node_id in found_nodes:
+                                # print("found next node ", edge.dest.node_id)
+                                # print("found_nodes ", str(found_nodes))
+                                path_edges.append( (edge.src.loc, edge.dest.loc, '{:.0f}'.format(edge.length)) )
+                                total_length += edge.length
+                                temp_next_nodes.append(edge.dest.node_id)
 
-            if len(temp_next_nodes) == 0:
-                more_children = False
-            else:
-                next_nodes = temp_next_nodes
+                if len(temp_next_nodes) == 0:
+                    more_children = False
+                else:
+                    next_nodes = temp_next_nodes
+        elif showPath:
+            print("showing path")
+            savedPathLength = len(self.savedPath)
+            print("path length is ", savedPathLength)
+            i = 0
+            while i < savedPathLength:
+                if i + 1 == savedPathLength:
+                    break
+
+                node = self.network.nodes[self.savedPath[i]]
+                print("at index ", i, " node is ", node)
+                for e in node.neighbors:
+                    if e.dest.node_id == self.savedPath[i + 1]:       
+                        path_edges.append( (e.src.loc, e.dest.loc, '{:.0f}'.format(e.length)) )
+                        total_length += e.length
+                i += 1
 
         # edges_left = len(path_nodes)
         # while edges_left > 0:
@@ -138,7 +144,22 @@ class NetworkRoutingSolver:
         #     edges_left -= 1
         self.prev_array.clear()
         self.dist_array.clear()
+        self.savedPath.clear()
+        self.shortestPath.clear()
+        self.visited.clear()
         return {'cost':total_length, 'path':path_edges}
+    
+    def getEntireGraph(self):
+        path_edges = []
+        total_length = 0
+        for node in self.network.getNodes():
+            print(node)
+            for e in node.neighbors:
+                path_edges.append( (e.src.loc, e.dest.loc, str(e.src.node_id) + " " + '{:.0f}'.format(e.length) + " " + str(e.dest.node_id)) )
+                total_length += e.length
+
+        return {'cost':total_length, 'path':path_edges}
+
 
     def computeShortestPaths( self, srcIndex, use_heap=False ):
         self.source = srcIndex
@@ -148,6 +169,7 @@ class NetworkRoutingSolver:
         for i in range(len(self.network.getNodes())):
             self.dist_arr.append(-1)
             self.prev_arr.append(-1)
+            self.visited.append(False)
 
         self.dist_arr[self.source] = 0
 
@@ -165,29 +187,29 @@ class NetworkRoutingSolver:
                 neighbor_index = node.neighbors[e].dest.node_id
                 neighbor_node = node.neighbors[e].dest
                 edge = node.neighbors[e]
-                print("node_index ", node_index)
-                print("node_edge_index, ", e)
+                # print("node_index ", node_index)
+                # print("node_edge_index, ", e)
                 # print("node ", node)
-                print("neighbor_index ", neighbor_index)
+                # print("neighbor_index ", neighbor_index)
                 # print("neighbor_node ", neighbor_node)
                 # print("edge ", edge)
                 if array_heap.dist_array[neighbor_index] > array_heap.dist_array[node_index] + edge.length:
-                    print(array_heap.dist_array[neighbor_index], " > ", array_heap.dist_array[node_index], " + ", edge.length)
+                    # print(array_heap.dist_array[neighbor_index], " > ", array_heap.dist_array[node_index], " + ", edge.length)
                     array_heap.dist_array[neighbor_index] = array_heap.dist_array[node_index] + edge.length
                     array_heap.prev_array[neighbor_index] = node_index
-                    print(array_heap.dist_array)
-                    print(array_heap.prev_array)
+                    # print(array_heap.dist_array)
+                    # print(array_heap.prev_array)
                 elif(array_heap.dist_array[neighbor_index] < 0):
-                    print(array_heap.dist_array[neighbor_index], " is now  ", array_heap.dist_array[node_index], " + ", edge.length)
+                    # print(array_heap.dist_array[neighbor_index], " is now  ", array_heap.dist_array[node_index], " + ", edge.length)
                     array_heap.dist_array[neighbor_index] = array_heap.dist_array[node_index] + edge.length
                     array_heap.prev_array[neighbor_index] = node_index
-                    print(array_heap.dist_array)
-                    print(array_heap.prev_array)
+                    # print(array_heap.dist_array)
+                    # print(array_heap.prev_array)
                     
 
 
-        print("array_heap dist ", array_heap.dist_array)
-        print("array_heap prev ", array_heap.prev_array)
+        # print("array_heap dist ", array_heap.dist_array)
+        # print("array_heap prev ", array_heap.prev_array)
         self.dist_array = array_heap.dist_array
         self.prev_array = array_heap.prev_array
         

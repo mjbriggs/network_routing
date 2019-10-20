@@ -25,8 +25,8 @@ class ArrayHeap(NetworkHeap):
         #will return minimum node
         print("deleteMin")
         print("heap ", self.heap)
-        print("dist_array, ", self.dist_array)
-        print("prev_array ", self.prev_array)
+        # print("dist_array, ", self.dist_array)
+        # print("prev_array ", self.prev_array)
         if len(self.heap) < 1:
             return -1
         # this just signals that we are at the start of the loop, 
@@ -37,20 +37,21 @@ class ArrayHeap(NetworkHeap):
             if min_index < 1:
                 min_index = self.heap[i]
                 min = self.dist_array[min_index]
-            print("i == ", i, " heap length is ", len(self.heap))
-            print("at min_index ", min_index, " min distance is ", min)
+            # print("i == ", i, " heap length is ", len(self.heap))
+            # print("at min_index ", min_index, " min distance is ", min)
             if min == 0:
-                    print("at min_index ", min_index, " min distance is ", min)
+                    # print("at min_index ", min_index, " min distance is ", min)
                     self.heap.remove(min_index)
                     return min_index
             elif self.dist_array[self.heap[i]] == -1:
-                print("distance value is -1")
+                # print("distance value is -1")
+                p = i # random operation for clause to do something
             elif min == -1 and self.dist_array[self.heap[i]] > 0:
-                print("setting new min at ", self.heap[i])
+                # print("setting new min at ", self.heap[i])
                 min_index = self.heap[i]
                 min = self.dist_array[min_index]
             elif min > self.dist_array[self.heap[i]]:
-                print("setting new min at ", self.heap[i])
+                # print("setting new min at ", self.heap[i])
                 min_index = self.heap[i]
                 min = self.dist_array[min_index]
             i += 1

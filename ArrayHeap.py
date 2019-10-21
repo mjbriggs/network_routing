@@ -24,7 +24,7 @@ class ArrayHeap(NetworkHeap):
     def deleteMin(self):
         #will return minimum node
         print("deleteMin")
-        print("heap ", self.heap)
+        # print("heap ", self.heap)
         # print("dist_array, ", self.dist_array)
         # print("prev_array ", self.prev_array)
         if len(self.heap) < 1:
@@ -34,7 +34,7 @@ class ArrayHeap(NetworkHeap):
         min = -1
         i = 0             
         while i < len(self.heap):
-            if min_index < 1:
+            if min_index < 1 and self.dist_array[i] != -1:
                 min_index = self.heap[i]
                 min = self.dist_array[min_index]
             # print("i == ", i, " heap length is ", len(self.heap))

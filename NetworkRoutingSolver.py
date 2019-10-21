@@ -20,25 +20,28 @@ class NetworkRoutingSolver:
         self.network = network
 
     def explore(self, srcIndex, destIndex):
-        # print("exploring at node ", srcIndex, " looking for node ", destIndex)
+        print("exploring at node ", srcIndex, " looking for node ", destIndex)
         self.visited[srcIndex] = True
         self.shortestPath.append(srcIndex)
-        # print("pushing ", srcIndex, " onto stack")
+        print("pushing ", srcIndex, " onto stack")
         if srcIndex == destIndex:
-            # print("found destination node, path is ", self.shortestPath)
+            print("found destination node, path is ", self.shortestPath)
             self.savedPath = [i for i in self.shortestPath]
             return
         else:
             node = self.network.nodes[srcIndex]
             visits = 0
-            # print("checking ", srcIndex, "'s children")
+            print("checking ", srcIndex, "'s children")
             for n in node.neighbors:
+                print("child is ", n.dest)
+                print("visited == ", self.visited[n.dest.node_id])
+                print("prev_array value is ", self.prev_array[n.dest.node_id], " and srcIndex is ", srcIndex)
                 if self.visited[n.dest.node_id] == False and self.prev_array[n.dest.node_id] == srcIndex:
                     self.explore(n.dest.node_id, destIndex)
                     visits += 1
             
             #if visits == 0:
-            # print("popping ", srcIndex, " off of stack")
+            print("popping ", srcIndex, " off of stack")
             self.shortestPath.pop()
 
     def getShortestPath( self, destIndex ):
@@ -81,8 +84,8 @@ class NetworkRoutingSolver:
         looping = True
         self.explore(self.source, destIndex) 
 
-        print("network dist ", self.dist_array)
-        print("network prev ", self.prev_array)
+        # print("network dist ", self.dist_array)
+        # print("network prev ", self.prev_array)
         print("path_nodes ", self.savedPath)
 
         next_nodes = []
@@ -167,8 +170,8 @@ class NetworkRoutingSolver:
         array_heap = ArrayHeap()
         
         for i in range(len(self.network.getNodes())):
-            self.dist_arr.append(-1)
-            self.prev_arr.append(-1)
+            self.dist_arr.append(20000000)
+            self.prev_arr.append(20000000)
             self.visited.append(False)
 
         self.dist_arr[self.source] = 0
@@ -187,24 +190,26 @@ class NetworkRoutingSolver:
                 neighbor_index = node.neighbors[e].dest.node_id
                 neighbor_node = node.neighbors[e].dest
                 edge = node.neighbors[e]
-                # print("node_index ", node_index)
-                # print("node_edge_index, ", e)
-                # print("node ", node)
-                # print("neighbor_index ", neighbor_index)
-                # print("neighbor_node ", neighbor_node)
-                # print("edge ", edge)
-                if array_heap.dist_array[neighbor_index] > array_heap.dist_array[node_index] + edge.length:
-                    # print(array_heap.dist_array[neighbor_index], " > ", array_heap.dist_array[node_index], " + ", edge.length)
+                print("node_index ", node_index)
+                print("node_edge_index, ", e)
+                print("node ", node)
+                print("neighbor_index ", neighbor_index)
+                print("neighbor_node ", neighbor_node)
+                print("neighbor dist value ", array_heap.dist_array[neighbor_index])
+                print("edge ", edge)
+                if(array_heap.dist_array[neighbor_index] < 0 and array_heap.dist_array[node_index] >= 0):
+                    print(array_heap.dist_array[neighbor_index], " is now  ", array_heap.dist_array[node_index], " + ", edge.length)
                     array_heap.dist_array[neighbor_index] = array_heap.dist_array[node_index] + edge.length
                     array_heap.prev_array[neighbor_index] = node_index
                     # print(array_heap.dist_array)
                     # print(array_heap.prev_array)
-                elif(array_heap.dist_array[neighbor_index] < 0):
-                    # print(array_heap.dist_array[neighbor_index], " is now  ", array_heap.dist_array[node_index], " + ", edge.length)
+                elif array_heap.dist_array[neighbor_index] > array_heap.dist_array[node_index] + edge.length:
+                    print(array_heap.dist_array[neighbor_index], " > ", array_heap.dist_array[node_index], " + ", edge.length)
                     array_heap.dist_array[neighbor_index] = array_heap.dist_array[node_index] + edge.length
                     array_heap.prev_array[neighbor_index] = node_index
                     # print(array_heap.dist_array)
                     # print(array_heap.prev_array)
+                
                     
 
 

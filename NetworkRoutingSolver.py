@@ -132,7 +132,7 @@ class NetworkRoutingSolver:
         for node in self.network.getNodes():
             print(node)
             for e in node.neighbors:
-                path_edges.append( (e.src.loc, e.dest.loc, str(e.src.node_id) + " " + '{:.0f}'.format(e.length) + " " + str(e.dest.node_id)) )
+                path_edges.append( (e.src.loc, e.dest.loc, '{:.0f}'.format(e.length)) )
                 total_length += e.length
 
         return {'cost':total_length, 'path':path_edges}

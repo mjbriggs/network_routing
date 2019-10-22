@@ -23,4 +23,11 @@ class NetworkHeap(abc.ABC):
     @abc.abstractmethod
     def length(self):
         pass
-
+    
+    @abc.abstractmethod
+    def updateDistance(self, index, distance):
+        pass    
+    
+    @abc.abstractmethod
+    def updatePrev(self, index, prev):
+        pass

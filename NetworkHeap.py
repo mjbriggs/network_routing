@@ -26,8 +26,9 @@ class NetworkHeap(abc.ABC):
     
     @abc.abstractmethod
     def updateDistance(self, index, distance):
-        pass    
+        self.dist_array[index] = distance
     
     @abc.abstractmethod
     def updatePrev(self, index, prev):
-        pass
+        self.prev_array[index] = prev
+

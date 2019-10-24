@@ -6,6 +6,7 @@ import time
 import math
 from NetworkHeap import NetworkHeap
 from ArrayHeap import ArrayHeap
+from MinHeap import MinHeap
 
 
 class NetworkRoutingSolver:
@@ -146,11 +147,14 @@ class NetworkRoutingSolver:
         if not use_heap:
             heap = ArrayHeap()
         else:
-            heap = ArrayHeap()
+            heap = MinHeap()
+        
+        heap.prev_array.clear()
+        heap.dist_array.clear()
         
         for i in range(len(self.network.getNodes())):
             self.dist_arr.append(math.inf)
-            self.prev_arr.append(math.inf)
+            self.prev_arr.append(None)
             self.visited.append(False)
 
         self.dist_arr[self.source] = 0
@@ -173,14 +177,15 @@ class NetworkRoutingSolver:
                 if heap.dist_array[neighbor_index] > heap.dist_array[node_index] + edge.length:
                     newDistance = heap.dist_array[node_index] + edge.length
                     heap.updateDistance(neighbor_index, newDistance)
+                    # print(heap.prev_array)
                     heap.updatePrev(neighbor_index, node_index)
                     heap.decreaseKey(neighbor_index)
                 
                     
 
 
-        # print("array_heap dist ", array_heap.dist_array)
-        # print("array_heap prev ", array_heap.prev_array)
+        print("array_heap dist ", heap.dist_array)
+        print("array_heap prev ", heap.prev_array)
         self.dist_array = heap.dist_array
         self.prev_array = heap.prev_array
                 

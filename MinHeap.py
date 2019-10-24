@@ -15,6 +15,11 @@ class MinHeap(NetworkHeap):
         for n in range(len(graph)):
             self.queue.append(n)
             self.pointers.append(n)
+            if self.dist_array[n] == 0:
+                self.queue[n] = self.queue[0]
+                self.pointers[self.queue[0]] = n
+                self.queue[0] = n
+                self.pointers[n] = 0
         
         # print(self.queue)
         # print(self.pointers)
@@ -26,7 +31,7 @@ class MinHeap(NetworkHeap):
         self.bubbleUp(node)
 
     def deleteMin(self):
-        self.printLists("deleteMin")
+        # self.printLists("deleteMin")
 
         if self.length() == 0:
             return -1
@@ -39,11 +44,11 @@ class MinHeap(NetworkHeap):
             return x
 
     def decreaseKey(self, node):
-        self.printLists("decreaseKey(" + str(node) + ")")
+        # self.printLists("decreaseKey(" + str(node) + ")")
 
-        if self.length() != 0:
-            print(node, " pointer value is ", self.pointers[node])            
-            self.bubbleUp(node)
+        if self.length() != 0 and self.pointers[node] != -1:
+            # print(node, " pointer value is ", self.pointers[node])            
+            self.bubbleUp(node, self.pointers[node])
 
     def length(self):
         return len(self.queue)
@@ -55,26 +60,26 @@ class MinHeap(NetworkHeap):
         super().updatePrev(index, prev)
 
 
-    def bubbleUp(self, id):
+    def bubbleUp(self, id, position):
         if self.length() <= 0: 
             return
 
-        idPos = self.pointers[id]
-        endPos = self.length() - 1
-        end = self.queue[endPos]
-        self.queue[idPos] = end 
-        self.queue[endPos] = id
-        self.pointers[end] = idPos
-        self.pointers[id] = endPos
+        # idPos = self.pointers[id]
+        # endPos = self.length() - 1
+        # end = self.queue[endPos]
+        # self.queue[idPos] = end 
+        # self.queue[endPos] = id
+        # self.pointers[end] = idPos
+        # self.pointers[id] = endPos
 
-        position = self.pointers[id]
-
-        self.printLists("bubbleUp")
-
+        self.queue[position] = id  
+        self.pointers[id] = position
+        # self.printLists("bubbleUp(" + str(id) + ", " + str(position) + ")")
+        # print("queue[", str(position), " is ", str(self.queue[position]), " and pointers[", position, "] is ", self.pointers[position])
         parent = self.parent(id, position)
 
-        print("parent in bubbleUp is ", str(parent))
-        while position > 0 and self.dist_array[parent] > self.dist_array[id]:
+        # print("parent in bubbleUp is ", str(parent))
+        while position > 0 and self.dist_array[parent] > self.dist_array[id] and parent > -1:
             parentPos = self.pointers[parent]
             self.queue[position] = parent
             self.queue[parentPos] = id
@@ -82,13 +87,13 @@ class MinHeap(NetworkHeap):
             self.pointers[id] = parentPos
             position = parentPos
             parent = self.parent(id, position)
-            self.printLists("parent is now " + str(self.queue[self.pointers[id]]) + " at position " + str(self.pointers[id]))
+            # self.printLists("parent is now " + str(self.queue[self.pointers[id]]) + " at position " + str(self.pointers[id]))
 
 
         self.queue[position] = id 
         self.pointers[id] = position
 
-        self.printLists("end of bubbleUp")
+        # self.printLists("end of bubbleUp")
 
         
 
@@ -100,24 +105,24 @@ class MinHeap(NetworkHeap):
         self.pointers[id] = position
         child = self.minChild(id, position)
 
-        self.printLists("siftDown")
+        # self.printLists("siftDown")
         # print(child)
 
-        print("child in siftDown is ", str(child))
+        # print("child in siftDown is ", str(child))
         while child != -1 and self.dist_array[child] < self.dist_array[id]:
             childPos = self.pointers[child]
             self.queue[position] = child
             self.queue[childPos] = id
             self.pointers[child] = position
             self.pointers[id] = childPos
-            print("child is now ", id)
+            # print("child is now ", id)
             position = childPos
             child = self.minChild(id, position)
         
         self.queue[position] = id
         self.pointers[id] = position
 
-        self.printLists("end of siftDown")
+        # self.printLists("end of siftDown")
             
 
     def minChild(self, id, position): # returns the node_id of the minimum child
@@ -140,13 +145,13 @@ class MinHeap(NetworkHeap):
             else:   #for tiebreaker return right child
                 retVal = right
 
-        print("min child of ", id, " is ", retVal)
+        # print("min child of ", id, " is ", retVal)
         return retVal
 
                     
     def leftChild(self, id, position):
-        print(id, " ", position, " ", self.queue[position])
-        self.printLists("leftChild")
+        # print(id, " ", position, " ", self.queue[position])
+        # self.printLists("leftChild")
         assert self.queue[position] == id
         leftPos = 2*position + 1
         if leftPos >= self.length():
@@ -163,6 +168,9 @@ class MinHeap(NetworkHeap):
             return self.queue[rightPos]
 
     def parent(self, id, position):
+        # print("id ", id, " position ", position)
+        # print("value at position ", self.queue[position])
+        # self.printLists("parent(id, position)")
         assert self.queue[position] == id
         parentPos = (position - 1) // 2
         if parentPos < 0:

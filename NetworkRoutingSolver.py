@@ -184,8 +184,8 @@ class NetworkRoutingSolver:
                     
 
 
-        print("array_heap dist ", heap.dist_array)
-        print("array_heap prev ", heap.prev_array)
+        # print("array_heap dist ", heap.dist_array)
+        # print("array_heap prev ", heap.prev_array)
         self.dist_array = heap.dist_array
         self.prev_array = heap.prev_array
                 
